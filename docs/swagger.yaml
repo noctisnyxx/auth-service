@@ -1,0 +1,147 @@
+basePath: /api
+definitions:
+  transport.RestResponse:
+    properties:
+      data: {}
+      message:
+        example: Success or failed message
+        type: string
+    type: object
+  transport.User_resp:
+    properties:
+      email:
+        example: noctisnyx@noctisnyx.com
+        type: string
+      email_verified:
+        example: false
+        type: boolean
+      is_active:
+        example: true
+        type: boolean
+      phone_number:
+        example: "+6281234567890"
+        type: string
+      phone_verified:
+        example: false
+        type: boolean
+      username:
+        example: noctisnyx
+        type: string
+    type: object
+  transport.UserRegistration_req:
+    properties:
+      email:
+        example: dinar.hadiyanto@outlook.com
+        maxLength: 255
+        type: string
+      password:
+        example: password123
+        maxLength: 64
+        minLength: 8
+        type: string
+      phone_number:
+        example: "+6281234567890"
+        type: string
+      username:
+        example: dinar.hadiyanto
+        maxLength: 32
+        minLength: 6
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+info:
+  contact:
+    email: dinar.hadiyanto@outlook.com
+    name: Dinar
+  description: This is a sample server for a hybrid inverter.
+  title: Auth Core REST API Docs
+  version: "2.0"
+paths:
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: Find users by ID, email, or username
+      parameters:
+      - description: User ID
+        in: query
+        name: id
+        type: string
+      - description: User email
+        in: query
+        name: email
+        type: string
+      - description: User username
+        in: query
+        name: username
+        type: string
+      - description: User email verification status
+        in: query
+        name: email_verified
+        type: boolean
+      - description: User phone verification status
+        in: query
+        name: phone_verified
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Users found successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/transport.RestResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/transport.User_resp'
+                  type: array
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+      summary: Find users
+      tags:
+      - User
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with the provided details
+      parameters:
+      - description: User registration details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/transport.UserRegistration_req'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User registered successfully
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+      summary: Register a new user
+      tags:
+      - User
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
