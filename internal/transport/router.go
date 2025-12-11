@@ -11,7 +11,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func NewRouter(handler *UserHandler) *gin.Engine {
+func NewRouter(userHandler *UserHandler, clientHandler *ClientHandler) *gin.Engine {
 	gin.SetMode(configs.GIN_MODE)
 	r := gin.Default()
 	config := cors.DefaultConfig()
@@ -23,13 +23,21 @@ func NewRouter(handler *UserHandler) *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(ErrorLoggingMiddleware())
 	api := r.Group("/api")
-	userGroup := api.Group("/user")
+	clientGroup := api.Group("/clients")
 	{
-		userGroup.GET("", handler.FindUsers)
-		userGroup.POST("/register", handler.RegisterUser)
+		clientGroup.POST("", clientHandler.RegisterClient)
+		clientGroup.GET("", clientHandler.FindClients)
+		clientGroup.GET("/:id", clientHandler.FindClientDetails)
+		clientGroup.PATCH("/:id", clientHandler.UpdateClient)
+		clientGroup.DELETE("/:id", clientHandler.DeleteClient)
 	}
 
-	//swagger
+	userGroup := api.Group("/users")
+	{
+		userGroup.GET("", userHandler.FindUsers)
+		userGroup.POST("", userHandler.RegisterUser)
+	}
+
 	fmt.Println("swagger URL: http://localhost:" + configs.BE_PORT + "/api/swagger/index.html")
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.NewHandler()))
 

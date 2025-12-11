@@ -6,8 +6,10 @@ import (
 )
 
 type IUserRepository interface {
-	Insert(context.Context, *User) error
-	FindUsers(context.Context, FindUserQuery) ([]User, error)
+	Insert(ctx context.Context, u *User) error
+	Find(ctx context.Context, q FindUserQuery) ([]User, error)
+	Update(ctx context.Context, id string, u UserUpdate) error
+	Delete(ctx context.Context, id string) error
 }
 
 type User struct {
@@ -21,6 +23,16 @@ type User struct {
 	PhoneVerified bool
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
+}
+
+type UserUpdate struct {
+	Username      *string
+	Email         *string
+	Password      *string
+	Phone         *string
+	IsActive      *bool
+	EmailVerified *bool
+	PhoneVerified *bool
 }
 
 type FindUserQuery struct {

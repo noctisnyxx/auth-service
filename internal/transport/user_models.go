@@ -16,6 +16,14 @@ type User_resp struct {
 	PhoneVerified bool   `json:"phone_verified" example:"false"`
 }
 
+type UserUpdate_req struct {
+	Username *string `json:"username" example:"dinar.hadiyanto"`
+	Email    *string `json:"email" example:"dinar.hadiyanto@outlook.com"`
+	Password *string `json:"password" example:"password123"`
+	Phone    *string `json:"phone_number" example:"+6281234567890"`
+	IsActive *bool   `json:"is_active" example:"true"`
+}
+
 type FindUserQueryParam struct {
 	ID            *string `form:"id"`
 	Email         *string `form:"email"`

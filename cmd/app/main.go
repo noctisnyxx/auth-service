@@ -2,7 +2,7 @@ package main
 
 //	@title						Auth Core REST API Docs
 //	@version					2.0
-//	@description				This is a sample server for a hybrid inverter.
+//	@description				In progress
 //	@BasePath					/api
 //	@contact.name				Dinar
 //	@contact.email				dinar.hadiyanto@outlook.com
@@ -34,7 +34,12 @@ func main() {
 	userRepo := repository.NewUserRepository(sqlDB, logger)
 	userUsecase := usecase.NewUserUsecase(logger, userRepo)
 	userHandler := transport.NewUserHandler(logger, userUsecase)
-	router := transport.NewRouter(userHandler)
+
+	clientRepo := repository.NewClientRepository(logger, sqlDB)
+	clientUsecase := usecase.NewClientUsecase(logger, clientRepo)
+	clientHandler := transport.NewClientHandler(logger, clientUsecase)
+
+	router := transport.NewRouter(userHandler, clientHandler)
 
 	server := &http.Server{
 		Addr:    fmt.Sprintf(":%s", configs.BE_PORT),

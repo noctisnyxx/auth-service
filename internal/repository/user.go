@@ -56,7 +56,7 @@ func (r *UserRepository) Insert(ctx context.Context, user *domain.User) error {
 	return nil
 }
 
-func (r *UserRepository) FindUsers(ctx context.Context, q domain.FindUserQuery) ([]domain.User, error) {
+func (r *UserRepository) Find(ctx context.Context, q domain.FindUserQuery) ([]domain.User, error) {
 	r.logger.Debug("Call find users")
 	query := fmt.Sprintf(`
 		SELECT id, username, email, phone, password, is_active, email_verified, phone_verified, created_at, updated_at FROM %s WHERE 1=1
@@ -118,4 +118,84 @@ func (r *UserRepository) FindUsers(ctx context.Context, q domain.FindUserQuery) 
 
 	return users, nil
 
+}
+
+func (r *UserRepository) Update(ctx context.Context, id string, u domain.UserUpdate) error {
+	r.logger.Debug("Call update user")
+	query := fmt.Sprintf("UPDATE %s SET", TABLE_USERS)
+	args := []interface{}{}
+	if u.Username != nil {
+		query += " username = ?,"
+		args = append(args, *u.Username)
+	}
+	if u.Email != nil {
+		query += " email = ?,"
+		args = append(args, *u.Email)
+	}
+	if u.Password != nil {
+		query += " password = ?,"
+		args = append(args, *u.Password)
+	}
+	if u.Phone != nil {
+		query += " phone = ?,"
+		args = append(args, *u.Phone)
+	}
+	if u.IsActive != nil {
+		query += " is_active = ?,"
+		args = append(args, *u.IsActive)
+	}
+	if u.EmailVerified != nil {
+		query += " email_verified = ?,"
+		args = append(args, *u.EmailVerified)
+	}
+	if u.PhoneVerified != nil {
+		query += " phone_verified = ?,"
+		args = append(args, *u.PhoneVerified)
+	}
+
+	if len(args) == 0 {
+		r.logger.Warn("no fields to update for user")
+		return nil
+	}
+	query = query[:len(query)-1]
+	query += " WHERE id = ?"
+	args = append(args, id)
+
+	res, err := r.db.ExecContext(ctx, query, args...)
+	if err != nil {
+		r.logger.Error("failed to update user", "error", err)
+		return err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		r.logger.Error("failed to get rows affected", "error", err)
+		return err
+	}
+	if rowsAffected == 0 {
+		r.logger.Warn("no rows affected when updating user", "id", id)
+	}
+
+	return nil
+
+}
+
+func (r *UserRepository) Delete(ctx context.Context, id string) error {
+	r.logger.Debug("Call delete user")
+	q := fmt.Sprintf("DELETE FROM %s WHERE id = ?", TABLE_USERS)
+	res, err := r.db.ExecContext(ctx, q, id)
+	if err != nil {
+		r.logger.Error("failed to delete user", "error", err)
+		return err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		r.logger.Error("failed to get rows affected", "error", err)
+		return err
+	}
+	if rowsAffected == 0 {
+		r.logger.Warn("no rows affected when deleting user", "id", id)
+	}
+	return nil
 }

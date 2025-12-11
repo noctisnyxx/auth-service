@@ -18,7 +18,276 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/user": {
+        "/clients": {
+            "get": {
+                "description": "Find clients by ID, name, or protocol type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Find clients",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client protocol type ID",
+                        "name": "protocol_type_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Clients found successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/transport.RestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/transport.Client_resp"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Register a new client with the provided details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Register a new client",
+                "parameters": [
+                    {
+                        "description": "Client registration details",
+                        "name": "client",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/transport.ClientRegistration_req"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Client registered successfully",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/clients/{id}": {
+            "get": {
+                "description": "Find client details by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Find client details",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Client found successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/transport.RestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/transport.ClientDetails_resp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Client not found",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update a client's details by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Update a client",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Client update details",
+                        "name": "client",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/transport.ClientUpdate_req"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Client updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Client not found",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a client by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Delete a client",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Client ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Client deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Client not found",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
             "get": {
                 "description": "Find users by ID, email, or username",
                 "consumes": [
@@ -47,7 +316,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "User username",
-                        "name": "username",
+                        "name": "usersname",
                         "in": "query"
                     },
                     {
@@ -98,9 +367,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/user/register": {
+            },
             "post": {
                 "description": "Register a new user with the provided details",
                 "consumes": [
@@ -116,7 +383,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "User registration details",
-                        "name": "user",
+                        "name": "users",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -145,9 +412,186 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/{id}": {
+            "delete": {
+                "description": "Delete a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update a user's details by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update a user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User update details",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/transport.UserUpdate_req"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/transport.RestResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "transport.ClientDetails_resp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "client-app-1"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "client-app-1"
+                },
+                "protocol_type_id": {
+                    "type": "string",
+                    "example": "openid-connect"
+                },
+                "secret": {
+                    "type": "string",
+                    "example": "uLuGusLv7qgMpAN_zAhtmX7H4W571R9bG7rmIQ60Rto="
+                }
+            }
+        },
+        "transport.ClientRegistration_req": {
+            "type": "object",
+            "required": [
+                "name",
+                "protocol_type_id"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 6,
+                    "example": "client-app-1"
+                },
+                "protocol_type_id": {
+                    "type": "string",
+                    "example": "openid-connect"
+                }
+            }
+        },
+        "transport.ClientUpdate_req": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "client-app-updated"
+                },
+                "protocol_type_id": {
+                    "type": "string",
+                    "example": "openid-connect"
+                }
+            }
+        },
+        "transport.Client_resp": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "client-app-1"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "client-app-1"
+                },
+                "protocol_type_id": {
+                    "type": "string",
+                    "example": "openid-connect"
+                }
+            }
+        },
         "transport.RestResponse": {
             "type": "object",
             "properties": {
@@ -185,6 +629,31 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 32,
                     "minLength": 6,
+                    "example": "dinar.hadiyanto"
+                }
+            }
+        },
+        "transport.UserUpdate_req": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "dinar.hadiyanto@outlook.com"
+                },
+                "is_active": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "example": "+6281234567890"
+                },
+                "username": {
+                    "type": "string",
                     "example": "dinar.hadiyanto"
                 }
             }
@@ -233,7 +702,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/api",
 	Schemes:          []string{},
 	Title:            "Auth Core REST API Docs",
-	Description:      "This is a sample server for a hybrid inverter.",
+	Description:      "In progress",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

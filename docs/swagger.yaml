@@ -1,5 +1,55 @@
 basePath: /api
 definitions:
+  transport.Client_resp:
+    properties:
+      id:
+        example: client-app-1
+        type: string
+      name:
+        example: client-app-1
+        type: string
+      protocol_type_id:
+        example: openid-connect
+        type: string
+    type: object
+  transport.ClientDetails_resp:
+    properties:
+      id:
+        example: client-app-1
+        type: string
+      name:
+        example: client-app-1
+        type: string
+      protocol_type_id:
+        example: openid-connect
+        type: string
+      secret:
+        example: uLuGusLv7qgMpAN_zAhtmX7H4W571R9bG7rmIQ60Rto=
+        type: string
+    type: object
+  transport.ClientRegistration_req:
+    properties:
+      name:
+        example: client-app-1
+        maxLength: 64
+        minLength: 6
+        type: string
+      protocol_type_id:
+        example: openid-connect
+        type: string
+    required:
+    - name
+    - protocol_type_id
+    type: object
+  transport.ClientUpdate_req:
+    properties:
+      name:
+        example: client-app-updated
+        type: string
+      protocol_type_id:
+        example: openid-connect
+        type: string
+    type: object
   transport.RestResponse:
     properties:
       data: {}
@@ -52,15 +102,205 @@ definitions:
     - password
     - username
     type: object
+  transport.UserUpdate_req:
+    properties:
+      email:
+        example: dinar.hadiyanto@outlook.com
+        type: string
+      is_active:
+        example: true
+        type: boolean
+      password:
+        example: password123
+        type: string
+      phone_number:
+        example: "+6281234567890"
+        type: string
+      username:
+        example: dinar.hadiyanto
+        type: string
+    type: object
 info:
   contact:
     email: dinar.hadiyanto@outlook.com
     name: Dinar
-  description: This is a sample server for a hybrid inverter.
+  description: In progress
   title: Auth Core REST API Docs
   version: "2.0"
 paths:
-  /user:
+  /clients:
+    get:
+      consumes:
+      - application/json
+      description: Find clients by ID, name, or protocol type
+      parameters:
+      - description: Client protocol type ID
+        in: query
+        name: protocol_type_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Clients found successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/transport.RestResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/transport.Client_resp'
+                  type: array
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+      summary: Find clients
+      tags:
+      - Client
+    post:
+      consumes:
+      - application/json
+      description: Register a new client with the provided details
+      parameters:
+      - description: Client registration details
+        in: body
+        name: client
+        required: true
+        schema:
+          $ref: '#/definitions/transport.ClientRegistration_req'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Client registered successfully
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+      summary: Register a new client
+      tags:
+      - Client
+  /clients/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a client by ID
+      parameters:
+      - description: Client ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Client deleted successfully
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "404":
+          description: Client not found
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+      summary: Delete a client
+      tags:
+      - Client
+    get:
+      consumes:
+      - application/json
+      description: Find client details by ID
+      parameters:
+      - description: Client ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Client found successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/transport.RestResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/transport.ClientDetails_resp'
+              type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "404":
+          description: Client not found
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+      summary: Find client details
+      tags:
+      - Client
+    put:
+      consumes:
+      - application/json
+      description: Update a client's details by ID
+      parameters:
+      - description: Client ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Client update details
+        in: body
+        name: client
+        required: true
+        schema:
+          $ref: '#/definitions/transport.ClientUpdate_req'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Client updated successfully
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "404":
+          description: Client not found
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+      summary: Update a client
+      tags:
+      - Client
+  /users:
     get:
       consumes:
       - application/json
@@ -76,7 +316,7 @@ paths:
         type: string
       - description: User username
         in: query
-        name: username
+        name: usersname
         type: string
       - description: User email verification status
         in: query
@@ -111,7 +351,6 @@ paths:
       summary: Find users
       tags:
       - User
-  /user/register:
     post:
       consumes:
       - application/json
@@ -119,7 +358,7 @@ paths:
       parameters:
       - description: User registration details
         in: body
-        name: user
+        name: users
         required: true
         schema:
           $ref: '#/definitions/transport.UserRegistration_req'
@@ -139,6 +378,77 @@ paths:
           schema:
             $ref: '#/definitions/transport.RestResponse'
       summary: Register a new user
+      tags:
+      - User
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User deleted successfully
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+      summary: Delete a user
+      tags:
+      - User
+    patch:
+      consumes:
+      - application/json
+      description: Update a user's details by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User update details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/transport.UserUpdate_req'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User updated successfully
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/transport.RestResponse'
+      summary: Update a user
       tags:
       - User
 securityDefinitions:
