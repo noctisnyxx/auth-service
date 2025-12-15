@@ -36,9 +36,10 @@ type UserUpdate struct {
 }
 
 type FindUserQuery struct {
-	ID            *string
-	Email         *string
-	Username      *string
-	EmailVerified *bool
-	PhoneVerified *bool
+	ID             *string
+	Email          *string
+	Username       *string
+	HashedPassword *string
+	EmailVerified  *bool
+	PhoneVerified  *bool
 }

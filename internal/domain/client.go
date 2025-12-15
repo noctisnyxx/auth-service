@@ -33,6 +33,7 @@ type ClientUpdate struct {
 
 type FindClientQuery struct {
 	ID             *string
+	Secret         *string
 	Name           *string
 	ProtocolTypeID *string
 }
