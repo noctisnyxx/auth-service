@@ -16,52 +16,52 @@ import (
 var _ = godotenv.Load(".env")
 
 var (
-	GIN_MODE                = os.Getenv("GIN_MODE")
-	BE_HOST                 = os.Getenv("BE_HOST")
-	BE_PORT                 = os.Getenv("BE_PORT")
-	MARIA_USERNAME          = os.Getenv("MARIA_USERNAME")
-	MARIA_PASSWORD          = os.Getenv("MARIA_PASSWORD")
-	MARIA_HOST              = os.Getenv("MARIA_HOST")
-	MARIA_PORT              = os.Getenv("MARIA_PORT")
-	AUTH_CORE_DB_NAME       = os.Getenv("AUTH_CORE_DB_NAME")
-	MARIA_CHARSET           = os.Getenv("MARIA_CHARSET")
-	MARIA_PARSE_TIME        = os.Getenv("MARIA_PARSE_TIME")
-	MARIA_LOC               = os.Getenv("MARIA_LOC")
-	MARIA_MAX_OPEN_CONNS    = os.Getenv("MARIA_MAX_OPEN_CONNS")
-	MARIA_MAX_IDLE_CONNS    = os.Getenv("MARIA_MAX_IDLE_CONNS")
-	MARIA_CONN_MAX_LIFETIME = os.Getenv("MARIA_CONN_MAX_LIFETIME")
-	AUTH_CORE_DB_DSN        = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
-		MARIA_USERNAME,
-		MARIA_PASSWORD,
-		MARIA_HOST,
-		MARIA_PORT,
-		AUTH_CORE_DB_NAME,
-		MARIA_CHARSET,
-		MARIA_PARSE_TIME,
-		MARIA_LOC,
+	GinMode              = os.Getenv("GIN_MODE")
+	AppHost              = os.Getenv("BE_HOST")
+	AppPort              = os.Getenv("BE_PORT")
+	MariaUsername        = os.Getenv("MARIA_USERNAME")
+	MariaPassword        = os.Getenv("MARIA_PASSWORD")
+	MariaHost            = os.Getenv("MARIA_HOST")
+	MariaPort            = os.Getenv("MARIA_PORT")
+	AuthCoreDbName       = os.Getenv("AUTH_CORE_DB_NAME")
+	MariaCharset         = os.Getenv("MARIA_CHARSET")
+	MariaParseTime       = os.Getenv("MARIA_PARSE_TIME")
+	MariaLoc             = os.Getenv("MARIA_LOC")
+	MariaMaxOpenConns    = os.Getenv("MARIA_MAX_OPEN_CONNS")
+	MariaMaxIdleConns    = os.Getenv("MARIA_MAX_IDLE_CONNS")
+	MariaConnMaxLifetime = os.Getenv("MARIA_CONN_MAX_LIFETIME")
+	AuthCoreDbDsn        = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=%s&loc=%s",
+		MariaUsername,
+		MariaPassword,
+		MariaHost,
+		MariaPort,
+		AuthCoreDbName,
+		MariaCharset,
+		MariaParseTime,
+		MariaLoc,
 	)
 )
 
-// setup logger
+// SetupLogger setup logger
 func SetupLogger() *slog.Logger {
 	return slog.New(slog.NewJSONHandler(os.Stdout, nil))
 }
 
-// setup database
+// SetupDatabase setup database
 func SetupDatabase() (*sql.DB, error) {
-	db, err := sql.Open("mysql", AUTH_CORE_DB_DSN)
+	db, err := sql.Open("mysql", AuthCoreDbDsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
-	intMaxConn, err := strconv.Atoi(MARIA_MAX_OPEN_CONNS)
+	intMaxConn, err := strconv.Atoi(MariaMaxOpenConns)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert MARIA_MAX_OPEN_CONNS to int: %w", err)
 	}
-	intMaxIdle, err := strconv.Atoi(MARIA_MAX_IDLE_CONNS)
+	intMaxIdle, err := strconv.Atoi(MariaMaxIdleConns)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert MARIA_MAX_IDLE_CONNS to int: %w", err)
 	}
-	intConnMaxLifetime, err := strconv.Atoi(MARIA_CONN_MAX_LIFETIME)
+	intConnMaxLifetime, err := strconv.Atoi(MariaConnMaxLifetime)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert MARIA_CONN_MAX_LIFETIME to int: %w", err)
 

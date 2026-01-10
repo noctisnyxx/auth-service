@@ -37,7 +37,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, NewRestResponse("failed to login", nil))
 		return
 	}
-	url := fmt.Sprintf("http://%s:%s/authorize?code=%s", configs.BE_HOST, configs.BE_PORT, authCode)
+	url := fmt.Sprintf("http://%s:%s/authorize?code=%s", configs.AppHost, configs.AppPort, authCode)
 	c.Redirect(http.StatusFound, url)
 }
 

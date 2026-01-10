@@ -12,7 +12,7 @@ import (
 )
 
 func NewRouter(userHandler *UserHandler, clientHandler *ClientHandler) *gin.Engine {
-	gin.SetMode(configs.GIN_MODE)
+	gin.SetMode(configs.GinMode)
 	r := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
@@ -38,7 +38,7 @@ func NewRouter(userHandler *UserHandler, clientHandler *ClientHandler) *gin.Engi
 		userGroup.POST("", userHandler.RegisterUser)
 	}
 
-	fmt.Println("swagger URL: http://localhost:" + configs.BE_PORT + "/api/swagger/index.html")
+	fmt.Println("swagger URL: http://localhost:" + configs.AppPort + "/api/swagger/index.html")
 	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.NewHandler()))
 
 	return r

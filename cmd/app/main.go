@@ -8,6 +8,7 @@ package main
 //	@contact.email				dinar.hadiyanto@outlook.com
 //	@securityDefinitions.basic	BasicAuth
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -42,12 +43,11 @@ func main() {
 	router := transport.NewRouter(userHandler, clientHandler)
 
 	server := &http.Server{
-		Addr:    fmt.Sprintf(":%s", configs.BE_PORT),
+		Addr:    fmt.Sprintf(":%s", configs.AppPort),
 		Handler: router,
 	}
 
-	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		logger.Error("failed to listen and serve", "error", err)
 	}
-
 }

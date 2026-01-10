@@ -33,3 +33,7 @@ go.work.sum
 
 # any folder with experiment name
 experiment*/
+
+# GoLand / IntelliJ
+.idea/
+*.iml
